@@ -1,65 +1,50 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-
-env:
-    project_name: Emun
-# Controls when the workflow will run
 on:
-
   pull_request:
-      branches:
-        - main
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+    branches:
+      - main
   push:
-    branches: 
-        - main
-
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches:
+      - main
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-    build-windows-clang:
-        name: Windows (Clang-cl)
-        runs-on: windows-latest
+  build-windows-clang:
+    name: Windows (Clang-cl)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup MSVC Environment
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure
+        run: |
+          cmake -B build ^
+            -G "Ninja" ^
+            -DCMAKE_C_COMPILER=clang-cl ^
+            -DCMAKE_CXX_COMPILER=clang-cl ^
+            -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
-            - name: Setup MSVC Environment
-              uses: ilammy/msvc-dev-cmd@v1
-
-            - name: Configure
-              run: |
-                cmake -B build ^
-                -G "Ninja" ^
-                -DCMAKE_C_COMPILER=clang-cl ^
-                -DCMAKE_CXX_COMPILER=clang ^
-                -DCMAKE_BUILD_TYPE=Rekease
-
-            - name: Build
-              run: cmake --build build -- config 
-
-            - name: Test
-              run: ctest -- test-dir build --output-on-failure
-
-    build-linux:
-      name: Linux (Clang)
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - name: Install Clang + Ninja
-          run: sudo apt-get install -y clang ninja-build
-        - name: Configure
-          run: |
-            cmake -B build \
-              -G Ninja \
-              -DCMAKE_C_COMPILER=clang \
-              -DCMAKE_CXX_COMPILER=clang++ \
-              -DCMAKE_BUILD_TYPE=Debug
-        - name: Build
-          run: cmake --build build
+  build-linux:
+    name: Linux (Clang)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Clang + Ninja
+        run: sudo apt-get install -y clang ninja-build
+      - name: Configure
+        run: |
+          cmake -B build \
+            -G Ninja \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
