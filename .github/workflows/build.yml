@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup MSVC Environment
         uses: ilammy/msvc-dev-cmd@v1
       - name: Configure
@@ -34,7 +34,7 @@ jobs:
     name: Linux (Clang)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install Clang + Ninja
         run: sudo apt-get install -y clang ninja-build
       - name: Configure
