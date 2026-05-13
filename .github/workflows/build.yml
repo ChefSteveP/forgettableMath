@@ -20,10 +20,10 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
       - name: Configure
         run: |
-          cmake -B build ^
-            -G "Ninja" ^
-            -DCMAKE_C_COMPILER=clang-cl ^
-            -DCMAKE_CXX_COMPILER=clang-cl ^
+          cmake -B build `
+            -G "Ninja" `
+            -DCMAKE_C_COMPILER=clang-cl `
+            -DCMAKE_CXX_COMPILER=clang-cl `
             -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build --config Release
