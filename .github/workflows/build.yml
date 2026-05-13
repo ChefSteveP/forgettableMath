@@ -46,3 +46,20 @@ jobs:
 
             - name: Test
               run: ctest -- test-dir build --output-on-failure
+
+    build-linux:
+      name: Linux (Clang)
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install Clang + Ninja
+          run: sudo apt-get install -y clang ninja-build
+        - name: Configure
+          run: |
+            cmake -B build \
+              -G Ninja \
+              -DCMAKE_C_COMPILER=clang \
+              -DCMAKE_CXX_COMPILER=clang++ \
+              -DCMAKE_BUILD_TYPE=Debug
+        - name: Build
+          run: cmake --build build
